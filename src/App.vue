@@ -1,28 +1,45 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-toolbar app>
+      <v-toolbar-title class="headline text-uppercase">
+        <v-flex>
+          <span>ЦСКА</span>
+          <span class="font-weight-light">Викторина</span>
+        </v-flex>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+
+      <v-btn
+          icon
+          href="https://pfc-cska.com/"
+          target="_blank"
+      >
+        <v-img
+            :src="require('./assets/logo.svg')"
+            contain
+            height="50"
+        ></v-img>
+      </v-btn>
+    </v-toolbar>
+
+    <v-content>
+      <Quiz/>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Quiz from './components/Quiz'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    HelloWorld
+    Quiz
+  },
+  data () {
+    return {
+      //
+    }
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
