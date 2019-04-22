@@ -80,7 +80,7 @@
         ],
         questionIndex: 0,
         isFinished: false,
-        time: 10
+        time: 15
       }
     },
     computed: {
@@ -109,7 +109,7 @@
             if (this.questionIndex == this.questions.length - 1) return this.isFinished = true
 
             this.questionIndex++
-            this.time = 10
+            this.time = 15
             this.$v.answer.$reset()
             this.answer = null
           }
@@ -123,7 +123,7 @@
 
         if (this.questionIndex == this.questions.length - 1) return this.isFinished = true
 
-        this.time = 10
+        this.time = 15
         this.questionIndex++
         this.$v.answer.$reset()
         this.answer = null
