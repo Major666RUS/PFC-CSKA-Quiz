@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import './plugins/vuetify'
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import App from './App.vue'
 
 Vue.config.productionTip = false
