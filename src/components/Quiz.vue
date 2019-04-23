@@ -19,9 +19,9 @@
       >
         <v-radio
             v-for="answer in questions[questionIndex].answers"
-            :key="answer"
-            :label="answer"
-            :value="answer"
+            :key="answer.title"
+            :label="answer.title"
+            :value="answer.title"
         ></v-radio>
       </v-radio-group>
     </transition>
@@ -32,8 +32,37 @@
 
   </v-container>
   <v-container v-else>
-    <h2 class="display-3">Как бы Вы Евгений не отвечали, все равно ни х** не знаете про Великий московский клуб!</h2>
-    <v-treeview :items="correctAnswers" class="mt-4"></v-treeview>
+    <template v-for="(question, questionIndex) in questions">
+      <h6 class="title" :key="questionIndex">
+        {{ questions[questionIndex].title }}
+      </h6>
+      <v-radio-group
+          :key="question.title"
+          :value="answers[questionIndex]"
+          disabled
+      >
+        <v-radio
+            v-for="answer in questions[questionIndex].answers"
+            :key="answer.title"
+            :label="answer.title"
+            :value="answer.title"
+        >
+          <template v-slot:label v-if="answer.correct">
+            <strong class="success--text">{{ answer.title }}</strong>
+          </template>
+
+          <template v-slot:label v-else-if="(answer.title == answers[questionIndex]) && !answer.correct">
+            <strong class="error--text">{{ answer.title }}</strong>
+          </template>
+
+        </v-radio>
+      </v-radio-group>
+    </template>
+
+    <h2 class="display-1">Итого:
+      <strong :class="this.correctAnswersCount == this.questions.length ? 'success--text' : 'error--text'">{{ this.correctAnswersCount }}</strong>
+      правильных ответов из {{ this.questions.length }}
+    </h2>
   </v-container>
 </template>
 
@@ -54,30 +83,70 @@
         questions: [
           {
             title: 'Кто забил первый гол в финале кубка УЕФА 2005 года в матче ЦСКА - Спортинг?',
-            answers: ['Василий Березуцкий', 'Алексей Березуцкий', 'Юрий Жирков', 'Вагнер Лав']
+            answers: [
+              {
+                title: 'Василий Березуцкий',
+                correct: false
+              },
+              {
+                title: 'Алексей Березуцкий',
+                correct: true
+              },
+              {
+                title: 'Юрий Жирков',
+                correct: false
+              },
+              {
+                title: 'Вагнер Лав',
+                correct: false
+              }
+            ]
           },
           {
             title: 'С клубом из какой страны ЦСКА не играл в плейофф того розыгрыша кубка УЕФА?',
-            answers: ['Италии', 'Сербии', 'Македонии', 'Франции']
+            answers: [
+              {
+                title: 'Италии',
+                correct: false
+              },
+              {
+                title: 'Сербии',
+                correct: false
+              },
+              {
+                title: 'Македонии',
+                correct: true
+              },
+              {
+                title: 'Франции',
+                correct: false
+              }
+            ]
           },
           {
             title: 'В том розыгрыше кубка УЕФА в плейофф армейцами был выбит еще один португальский клуб, помимо Спортинга. Что за клуб?',
-            answers: ['Брага', 'Бенфика', 'Порту', 'Насьонал']
+            answers: [
+              {
+                title: 'Брага',
+                correct: false
+              },
+              {
+                title: 'Бенфика',
+                correct: true
+              },
+              {
+                title: 'Порту',
+                correct: false
+              },
+              {
+                title: 'Насьонал',
+                correct: false
+              }
+            ]
           },
         ],
         answer: null,
         answers: [],
-        correctAnswers: [
-          {
-            id: 1,
-            name: 'Правильные ответы',
-            children: [
-              { id: 2, name: '1) Алешка Березуцкий' },
-              { id: 3, name: '2) Ну, конечно, Македонии' },
-              { id: 4, name: '3) Бенфика, of course' }
-            ]
-          }
-        ],
         questionIndex: 0,
         isFinished: false,
         time: 15
@@ -92,6 +161,15 @@
         if (!this.$v.answer.$dirty) return errors
         !this.$v.answer.checked && errors.push('Выберите один из представленых вариантов!')
         return errors
+      },
+      correctAnswersCount () {
+        const $this = this
+        return this.answers.reduce(function(sum, answer, questionIndex) {
+          let answerIndex
+          $this.questions[questionIndex].answers.some((item, index) => item.title == answer ? answerIndex = index : null)
+          if ($this.questions[questionIndex].answers[answerIndex].correct) return sum + 1
+          else return sum
+        }, 0)
       }
     },
     watch: {
