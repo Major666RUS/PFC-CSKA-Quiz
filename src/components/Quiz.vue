@@ -9,22 +9,25 @@
       <v-spacer></v-spacer>
       <span class="title ml-4" right>{{ timeRemaining }}</span>
     </v-toolbar>
-    <transition name="slide-fade" mode="out-in">
-      <v-radio-group
-          :key="questionIndex"
-          v-model="answer"
-          :error-messages="answerErrors"
-          @change="$v.answer.$reset()"
-          required
-      >
-        <v-radio
-            v-for="answer in questions[questionIndex].answers"
-            :key="answer.title"
-            :label="answer.title"
-            :value="answer.title"
-        ></v-radio>
-      </v-radio-group>
-    </transition>
+    <div>
+      <transition name="slide-fade" mode="out-in">
+        <v-radio-group
+            :key="questionIndex"
+            v-model="answer"
+            :error-messages="answerErrors"
+            @change="$v.answer.$reset()"
+            required
+        >
+          <v-radio
+              v-for="answer in questions[questionIndex].answers"
+              :key="answer.title"
+              :label="answer.title"
+              :value="answer.title"
+          ></v-radio>
+        </v-radio-group>
+      </transition>
+    </div>
+
     <div>
       <v-btn v-if="!(questionIndex == (questions.length - 1))" color="success" @click="goNext">Далее<v-icon dark right>arrow_forward</v-icon></v-btn>
       <v-btn v-else color="success" @click="goNext">Завершить<v-icon dark right>check_circle</v-icon></v-btn>
@@ -184,12 +187,17 @@
         setInterval(() => {
           this.time--
           if (this.time == 0) {
-            if (this.questionIndex == this.questions.length - 1) return this.isFinished = true
-
-            this.questionIndex++
-            this.time = 15
-            this.$v.answer.$reset()
-            this.answer = null
+            if (this.questionIndex == this.questions.length - 1) {
+              this.isFinished = true
+              this.time = 0
+              this.questionIndex = null
+              this.answer = null
+            } else {
+              this.time = 15
+              this.questionIndex++
+              this.$v.answer.$reset()
+              this.answer = null
+            }
           }
         }, 1000)
       },
@@ -199,12 +207,17 @@
           return
         }
 
-        if (this.questionIndex == this.questions.length - 1) return this.isFinished = true
-
-        this.time = 15
-        this.questionIndex++
-        this.$v.answer.$reset()
-        this.answer = null
+        if (this.questionIndex == this.questions.length - 1) {
+          this.isFinished = true
+          this.time = 0
+          this.questionIndex = null
+          this.answer = null
+        } else {
+          this.time = 15
+          this.questionIndex++
+          this.$v.answer.$reset()
+          this.answer = null
+        }
       }
     },
     mounted() {
