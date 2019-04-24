@@ -41,7 +41,7 @@
       </h6>
       <v-radio-group
           :key="question.title"
-          :value="answers[questionIndex]"
+          :value="selectedAnswers[questionIndex]"
           disabled
       >
         <v-radio
@@ -54,7 +54,7 @@
             <strong class="success--text">{{ answer.title }}</strong>
           </template>
 
-          <template v-slot:label v-else-if="(answer.title == answers[questionIndex]) && !answer.correct">
+          <template v-slot:label v-else-if="(answer.title == selectedAnswers[questionIndex]) && !answer.correct">
             <strong class="error--text">{{ answer.title }}</strong>
           </template>
 
@@ -64,7 +64,7 @@
 
     <h2 class="display-1">Итого:
       <strong :class="this.correctAnswersCount == this.questions.length ? 'success--text' : 'error--text'">{{ this.correctAnswersCount }}</strong>
-      правильных ответов из {{ this.questions.length }}
+      / {{ this.questions.length }}
     </h2>
   </v-container>
 </template>
@@ -149,7 +149,7 @@
           },
         ],
         answer: null,
-        answers: [],
+        selectedAnswers: [],
         questionIndex: 0,
         isFinished: false,
         time: 15
@@ -167,18 +167,24 @@
       },
       correctAnswersCount () {
         const $this = this
-        return this.answers.reduce(function(sum, answer, questionIndex) {
+        return this.selectedAnswers.reduce(function(sum, answer, questionIndex) {
+          if (!answer) return sum
+
           let answerIndex
-          $this.questions[questionIndex].answers.some((item, index) => item.title == answer ? answerIndex = index : null)
-          if ($this.questions[questionIndex].answers[answerIndex].correct) return sum + 1
-          else return sum
+          $this.questions[questionIndex].answers.some((item, index) => {
+            if (item.title == answer) {
+              answerIndex = index
+              return true
+            }
+          })
+          return $this.questions[questionIndex].answers[answerIndex].correct ? ++sum : sum
         }, 0)
       }
     },
     watch: {
       'answer': {
         handler() {
-          this.answers[this.questionIndex] = this.answer
+          this.selectedAnswers[this.questionIndex] = this.answer
         }
       }
     },
