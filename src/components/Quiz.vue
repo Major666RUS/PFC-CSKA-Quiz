@@ -1,14 +1,27 @@
 <template>
   <v-container v-if="!isFinished">
-    <v-toolbar dark color="success">
-      <transition name="slide-fade" mode="out-in">
-        <h6 class="title" :key="questionIndex">
-          {{ questions[questionIndex].title }}
-        </h6>
-      </transition>
-      <v-spacer></v-spacer>
-      <span class="title ml-4" right>{{ timeRemaining }}</span>
-    </v-toolbar>
+    <v-card dark color="success">
+      <v-card-text class="d-flex align-center">
+        <transition name="slide-fade" mode="out-in">
+          <h6 class="title" :key="questionIndex">
+            {{ questions[questionIndex].title }}
+          </h6>
+        </transition>
+        <v-flex class="progress ml-4">
+          <v-progress-circular
+              :rotate="360"
+              :size="80"
+              :width="10"
+              :value="time / 30 * 100"
+              color="white"
+          >
+            {{ timeRemaining }}
+          </v-progress-circular>
+        </v-flex>
+
+        <!--<span class="title ml-4" right>{{ timeRemaining }}</span>-->
+      </v-card-text>
+    </v-card>
     <div>
       <transition name="slide-fade" mode="out-in">
         <v-radio-group
@@ -173,7 +186,7 @@
         selectedAnswers: [],
         questionIndex: 0,
         isFinished: false,
-        time: 20
+        time: 30
       }
     },
     computed: {
@@ -220,7 +233,7 @@
               this.questionIndex = null
               this.answer = null
             } else {
-              this.time = 15
+              this.time = 30
               this.questionIndex++
               this.$v.answer.$reset()
               this.answer = null
@@ -240,7 +253,7 @@
           this.questionIndex = null
           this.answer = null
         } else {
-          this.time = 15
+          this.time = 30
           this.questionIndex++
           this.$v.answer.$reset()
           this.answer = null
@@ -257,6 +270,10 @@
 <style scoped>
   .success {
     background: linear-gradient(to right, red 50%, blue 50%);
+  }
+  .progress {
+    flex-grow: 0 !important;
+    flex-shrink: 0 !important;
   }
   .slide-fade-enter-active {
     transition: all .3s ease;
